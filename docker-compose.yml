@@ -1,0 +1,77 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:16.2-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  load_balancer:
+    restart: always
+    build:
+      context: .
+      dockerfile: rinha_load_balancer/Dockerfile
+    command: sh server.sh
+    ports:
+      - "9999:3000"
+    depends_on:
+      - api_instance_01
+
+  create_database:
+    restart: "no"
+    build:
+      context: .
+      dockerfile: rinha_api/Dockerfile
+    command: bundle exec rails db:create
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: RinhaAPI01
+
+  database_setup:
+    restart: "no"
+    build:
+      context: .
+      dockerfile: rinha_api/Dockerfile
+    command: bundle exec rails db:migrate db:seed
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: RinhaAPI01
+
+  api_instance_01:
+    restart: always
+    build:
+      context: .
+      dockerfile: rinha_api/Dockerfile
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    ports:
+      - "3001:3000"
+    environment:
+      APP_NAME: RinhaAPI01
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api_instance_02:
+    build:
+      context: .
+      dockerfile: rinha_api/Dockerfile
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    ports:
+      - "3002:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: RinhaAPI02
