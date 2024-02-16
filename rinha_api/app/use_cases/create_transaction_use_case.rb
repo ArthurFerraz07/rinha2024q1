@@ -15,12 +15,10 @@ class CreateTransactionUseCase < BaseUseCase
   def call
     @account.with_lock do
       @account.reload
-
-      account_has_limit?
-      create_transaction
-      update_account_balance
-
-      @account.save!
+      Transaction.transaction do
+        create_transaction
+        update_account_balance
+      end
     end
 
     true
@@ -36,10 +34,6 @@ class CreateTransactionUseCase < BaseUseCase
 
   private
 
-  def account_has_limit?
-    return unless @kind == 'd'
-  end
-
   def create_transaction
     @transaction = Transaction.create!(amount: @amount, kind: @kind, description: @desciption, account: @account)
   end
@@ -48,5 +42,6 @@ class CreateTransactionUseCase < BaseUseCase
     alpha = @kind == 'd' ? -1 : 1
 
     @account.balance += @amount * alpha
+    @account.save!
   end
 end
