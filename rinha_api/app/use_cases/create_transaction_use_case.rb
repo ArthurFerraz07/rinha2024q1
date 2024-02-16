@@ -13,12 +13,10 @@ class CreateTransactionUseCase < BaseUseCase
   end
 
   def call
-    @account.with_lock do
-      @account.reload
-      Transaction.transaction do
-        create_transaction
-        update_account_balance
-      end
+    @account.lock!
+    Transaction.transaction do
+      create_transaction
+      update_account_balance
     end
 
     true
