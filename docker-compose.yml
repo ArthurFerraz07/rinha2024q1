@@ -10,9 +10,22 @@ services:
       - "5432:5432"
     healthcheck:
       test: pg_isready -U postgres
-      interval: 2s
+      interval: 1s
       timeout: 3s
       retries: 30
+
+  database_setup:
+    restart: "no"
+    build:
+      context: .
+      dockerfile: rinha_api/Dockerfile
+    command: bundle exec rails db:prepare
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: RinhaAPI01
+      DB_HOST: db
 
   load_balancer:
     restart: always
@@ -21,33 +34,11 @@ services:
       dockerfile: rinha_load_balancer/Dockerfile
     command: sh server.sh
     ports:
-      - "9999:3000"
-    depends_on:
-      - api_instance_01
-
-  create_database:
-    restart: "no"
-    build:
-      context: .
-      dockerfile: rinha_api/Dockerfile
-    command: bundle exec rails db:create
-    depends_on:
-      db:
-        condition: service_healthy
+      - "9999:9999"
     environment:
-      APP_NAME: RinhaAPI01
-
-  database_setup:
-    restart: "no"
-    build:
-      context: .
-      dockerfile: rinha_api/Dockerfile
-    command: bundle exec rails db:migrate db:seed
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      APP_NAME: RinhaAPI01
+      APP_NAME: RinhaLoadBalancer
+      API_INSTANCE_01_URL: http://api_instance_01:3000
+      API_INSTANCE_02_URL: http://api_instance_02:3000
 
   api_instance_01:
     restart: always
@@ -57,13 +48,14 @@ services:
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     ports:
       - "3001:3000"
+    depends_on:
+      - database_setup
     environment:
       APP_NAME: RinhaAPI01
-    depends_on:
-      db:
-        condition: service_healthy
+      DB_HOST: db
 
   api_instance_02:
+    restart: always
     build:
       context: .
       dockerfile: rinha_api/Dockerfile
@@ -71,7 +63,7 @@ services:
     ports:
       - "3002:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      - database_setup
     environment:
       APP_NAME: RinhaAPI02
+      DB_HOST: db

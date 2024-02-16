@@ -2,13 +2,11 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: db
+  host: <%= ENV.fetch("DB_HOST") { "localhost" }  %>
   port: 5432
   username: postgres
   password: password
   database: rinha_database
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
@@ -16,6 +14,7 @@ development:
 
 test:
   <<: *default
-#
+  database: rinha_database_test
+
 production:
   <<: *default

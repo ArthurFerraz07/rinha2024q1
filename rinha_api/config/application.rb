@@ -23,5 +23,8 @@ module RinhaApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.hosts << 'api_instance_01:3000'
+    config.hosts << 'api_instance_02:3000'
   end
 end

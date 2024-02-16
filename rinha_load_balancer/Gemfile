@@ -9,3 +9,5 @@ gem "faraday"
 gem "rackup"
 
 gem "pry"
+
+gem "awesome_print"
