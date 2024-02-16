@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "7db1f7d3-e225-4688-85dd-740c9e59f437",
+		"name": "Rinha2024q1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18044064"
+	},
+	"item": [
+		{
+			"name": "Criar transação",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"valor\": 1006,\r\n    \"tipo\" : \"d\",\r\n    \"descricao\" : \"descricao\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9999/clientes/:client_id/transacoes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"clientes",
+						":client_id",
+						"transacoes"
+					],
+					"variable": [
+						{
+							"key": "client_id",
+							"value": "1"
+						}
+					]
+				},
+				"description": "- [client_id] (na URL) deve ser um número inteiro representando a identificação do cliente.\n- valor deve ser um número inteiro positivo que representa centavos (não vamos trabalhar com frações de centavos). Por exemplo, R$ 10 são 1000 centavos.\n- tipo deve ser apenas c para crédito ou d para débito.\n- descricao deve ser uma string de 1 a 10 caracteres."
+			},
+			"response": []
+		},
+		{
+			"name": "Extrato",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9999/clientes/:client_id/extrato",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9999",
+					"path": [
+						"clientes",
+						":client_id",
+						"extrato"
+					],
+					"variable": [
+						{
+							"key": "client_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "localhost:9999",
+			"type": "string"
+		}
+	]
+}

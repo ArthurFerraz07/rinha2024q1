@@ -2,7 +2,7 @@
 
 class AccountsController < ApplicationController
   def extract
-    @account = ::Account.find(params[:account_id])
+    @account = Account.find_by!(client_id: params[:account_id])
 
     @transactions = @account.transactions.order(created_at: :desc).limit(10)
 

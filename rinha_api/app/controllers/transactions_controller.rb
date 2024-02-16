@@ -2,13 +2,13 @@
 
 class TransactionsController < ApplicationController
   def create
-    load_account
+    @account = Account.find_by!(client_id: params[:account_id])
 
     use_case = CreateTransactionUseCase.new(
       @account,
-      transaction_params[:valor],
-      transaction_params[:tipo],
-      transaction_params[:descricao]
+      params[:valor],
+      params[:tipo],
+      params[:descricao]
     )
     use_case.call
 
@@ -22,15 +22,5 @@ class TransactionsController < ApplicationController
     render json: { code: 'account_not_found', error: e.message }, status: :not_found
   rescue StandardError => e
     render json: { code: 'unexpected_error', error: e.message }, status: :unprocessable_entity
-  end
-
-  private
-
-  def load_account
-    @account = ::Account.find(params[:account_id])
-  end
-
-  def transaction_params
-    params.permit(:valor, :tipo, :descricao)
   end
 end
