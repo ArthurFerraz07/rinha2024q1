@@ -1,9 +1,8 @@
-
 # frozen_string_literal: true
 
 Bundler.require(:default)
 
-require './server'
+require './app/controllers/load_balancer_controller'
 
 set :default_content_type, :json
 set :port, 9999
@@ -14,7 +13,7 @@ puts "\n\n"
 puts '⚡⚡⚡ Load Balancer Server Running ⚡⚡⚡'
 puts "\n\n"
 
-LoadBalancer.instance
+LoadBalancerService.instance
 Sinatra::Application.run!
 
 exit 0

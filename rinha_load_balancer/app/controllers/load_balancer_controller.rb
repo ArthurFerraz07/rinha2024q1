@@ -2,10 +2,10 @@
 
 Bundler.require(:default)
 
-require './load_balancer'
+require './app/services/load_balancer_service'
 
 get '*' do
-  load_balancer_response = LoadBalancer.instance.get(request.path)
+  load_balancer_response = LoadBalancerService.instance.get(request.path)
 
   load_balancer_response.body
 rescue StandardError => e
@@ -14,7 +14,7 @@ rescue StandardError => e
 end
 
 post '*' do
-  load_balancer_response = LoadBalancer.instance.post(request.path, request.body.read)
+  load_balancer_response = LoadBalancerService.instance.post(request.path, request.body.read)
 
   load_balancer_response.body
 rescue StandardError => e

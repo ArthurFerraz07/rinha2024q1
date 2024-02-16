@@ -3,7 +3,7 @@
 Bundler.require(:default)
 require 'json'
 
-class LoadBalancer
+class LoadBalancerService
   private_class_method :new
 
   CONTENT_TYPE = { 'Content-Type' => 'application/json' }.freeze
