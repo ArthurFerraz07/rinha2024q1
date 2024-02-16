@@ -14,6 +14,7 @@ class CreateTransactionUseCase < BaseUseCase
 
   def call
     @account.lock!
+
     Transaction.transaction do
       create_transaction
       update_account_balance
