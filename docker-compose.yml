@@ -29,18 +29,14 @@ services:
 
   load_balancer:
     restart: always
-    build:
-      context: .
-      dockerfile: rinha_load_balancer/Dockerfile
-    command: sh server.sh
+    image: nginx:latest
     ports:
-      - "9999:9999"
+      - "9999:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - database_setup
-    environment:
-      APP_NAME: RinhaLoadBalancer
-      API_INSTANCE_01_URL: http://api_instance_01:3000
-      API_INSTANCE_02_URL: http://api_instance_02:3000
+      - api_instance_01
+      - api_instance_02
 
   api_instance_01:
     restart: always
